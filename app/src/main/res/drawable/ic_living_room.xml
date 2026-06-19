@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="200"
+    android:viewportHeight="150">
+    <!-- Floor -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M10,140 L190,140 L180,110 L20,110 Z" />
+    <!-- Sofa -->
+    <path
+        android:fillColor="#5C6BC0"
+        android:pathData="M40,110 L160,110 L160,90 L150,90 L150,70 L50,70 L50,90 L40,90 Z" />
+    <path
+        android:fillColor="#3F51B5"
+        android:pathData="M50,90 L150,90 L150,110 L50,110 Z" />
+    <!-- TV Stand -->
+    <path
+        android:fillColor="#795548"
+        android:pathData="M70,70 L130,70 L130,65 L70,65 Z" />
+    <!-- TV Screen -->
+    <path
+        android:fillColor="#212121"
+        android:pathData="M80,65 L120,65 L120,40 L80,40 Z" />
+    <!-- Window -->
+    <path
+        android:strokeColor="#BDBDBD"
+        android:strokeWidth="2"
+        android:pathData="M165,40 L185,40 L185,80 L165,80 Z" />
+</vector>
