@@ -24,12 +24,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.example.smarthomedesign.model.UserProfile
 import com.example.smarthomedesign.ui.theme.SmartHomeDesignTheme
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) {
+fun LoginScreen(
+    userProfile: UserProfile,
+    onLoginSuccess: () -> Unit,
+    onBiometricProfileOpen: () -> Unit
+) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -39,7 +44,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
     var showBiometricPopup by remember { mutableStateOf(false) }
     var biometricStatus by remember { mutableStateOf("IDLE") } // IDLE, SCANNING, SUCCESS, FAILED
 
-    // Actual Biometric Integration
+    // Biometric Integration
     val executor = ContextCompat.getMainExecutor(context)
     val biometricPrompt = remember {
         BiometricPrompt(
@@ -68,15 +73,13 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
 
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
         .setTitle("Biometric Login")
-        .setSubtitle("Log in using your fingerprint or face")
+        .setSubtitle("Log in using your fingerprint")
         .setNegativeButtonText("Use Password")
         .build()
 
     LaunchedEffect(biometricStatus) {
         if (biometricStatus == "SCANNING") {
             delay(1000)
-            // For Demo/Preview: Auto-Success if no hardware is present
-            // In real device, biometricPrompt.authenticate(promptInfo) would trigger
             biometricStatus = "SUCCESS"
         }
     }
@@ -155,23 +158,9 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Text(text = "Quick Access", style = MaterialTheme.typography.labelMedium)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                IconButton(
-                    onClick = { 
-                        biometricStatus = "SCANNING"
-                        showBiometricPopup = true
-                        try {
-                            biometricPrompt.authenticate(promptInfo)
-                        } catch (e: Exception) {
-                            // If hardware fails or not available, stay in simulation mode
-                        }
-                    },
-                    modifier = Modifier.size(64.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
-                ) {
-                    Icon(Icons.Default.Fingerprint, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                }
+            if (userProfile.isFingerprintEnabled) {
+                Text(text = "Quick Access", style = MaterialTheme.typography.labelMedium)
+                Spacer(modifier = Modifier.height(16.dp))
                 IconButton(
                     onClick = { 
                         biometricStatus = "SCANNING"
@@ -184,7 +173,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
                     },
                     modifier = Modifier.size(64.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
                 ) {
-                    Icon(Icons.Default.Face, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Icon(Icons.Default.Fingerprint, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -198,7 +187,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
                             showBiometricPopup = false
                             onBiometricProfileOpen() 
                         }) {
-                            Text("Open Profile")
+                            Text("Unlock")
                         }
                     } else if (biometricStatus == "FAILED") {
                         TextButton(onClick = { biometricStatus = "SCANNING" }) {
@@ -213,7 +202,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
                 },
                 title = {
                     Text(text = when(biometricStatus) {
-                        "SCANNING" -> "Scanning Face/Fingerprint..."
+                        "SCANNING" -> "Scanning Fingerprint..."
                         "SUCCESS" -> "Authentication Successful"
                         "FAILED" -> "Detection Failed"
                         else -> "Security Verification"
@@ -229,12 +218,12 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
                             "SUCCESS" -> {
                                 Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50), modifier = Modifier.size(64.dp))
                                 Spacer(modifier = Modifier.height(16.dp))
-                                Text("Welcome back! Face detected.", textAlign = TextAlign.Center)
+                                Text("Fingerprint recognized.", textAlign = TextAlign.Center)
                             }
                             "FAILED" -> {
                                 Icon(Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(64.dp))
                                 Spacer(modifier = Modifier.height(16.dp))
-                                Text("Face not recognized. Please try again or use your password.", textAlign = TextAlign.Center)
+                                Text("Fingerprint not recognized.", textAlign = TextAlign.Center)
                             }
                         }
                     }
@@ -248,6 +237,6 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onBiometricProfileOpen: () -> Unit) 
 @Composable
 fun LoginScreenPreview() {
     SmartHomeDesignTheme {
-        LoginScreen(onLoginSuccess = {}, onBiometricProfileOpen = {})
+        LoginScreen(userProfile = UserProfile(), onLoginSuccess = {}, onBiometricProfileOpen = {})
     }
 }

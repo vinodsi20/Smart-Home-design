@@ -21,7 +21,14 @@ import com.example.smarthomedesign.ui.theme.SmartHomeDesignTheme
 @Composable
 fun SecurityPrivacyScreen(
     onBackClick: () -> Unit,
-    onChangePasswordClick: () -> Unit = {}
+    onChangePasswordClick: () -> Unit = {},
+    onBiometricClick: () -> Unit = {},
+    onTwoFactorClick: () -> Unit = {},
+    onLoginHistoryClick: () -> Unit = {},
+    onActivityLogClick: () -> Unit = {},
+    onThirdPartyAccessClick: () -> Unit = {},
+    onDataUsageClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -54,9 +61,9 @@ fun SecurityPrivacyScreen(
             
             val securityOptions = listOf(
                 SecurityOption("Change Password", "Update your account password", Icons.Default.Lock, onChangePasswordClick),
-                SecurityOption("Two-Factor Authentication", "Add an extra layer of security", Icons.Default.VerifiedUser, {}),
-                SecurityOption("Biometric Login", "Fingerprint and Face ID settings", Icons.Default.Fingerprint, {}),
-                SecurityOption("Login History", "Check active sessions and devices", Icons.Default.History, {})
+                SecurityOption("Two-Factor Authentication", "Add an extra layer of security", Icons.Default.VerifiedUser, onTwoFactorClick),
+                SecurityOption("Biometric Login", "Fingerprint and Face ID settings", Icons.Default.Fingerprint, onBiometricClick),
+                SecurityOption("Login History", "Check active sessions and devices", Icons.Default.History, onLoginHistoryClick)
             )
             
             items(securityOptions) { option ->
@@ -74,10 +81,10 @@ fun SecurityPrivacyScreen(
             }
             
             val privacyOptions = listOf(
-                SecurityOption("Activity Log", "Manage your device activity history", Icons.Default.ViewList, {}),
-                SecurityOption("Third-party Access", "Apps and services with home access", Icons.Default.Apps, {}),
-                SecurityOption("Data Usage", "How we use your smart home data", Icons.Default.Storage, {}),
-                SecurityOption("Privacy Policy", "Read our full privacy terms", Icons.Default.Description, {})
+                SecurityOption("Activity Log", "Manage your device activity history", Icons.Default.ViewList, onActivityLogClick),
+                SecurityOption("Third-party Access", "Apps and services with home access", Icons.Default.Apps, onThirdPartyAccessClick),
+                SecurityOption("Data Usage", "How we use your smart home data", Icons.Default.Storage, onDataUsageClick),
+                SecurityOption("Privacy Policy", "Read our full privacy terms", Icons.Default.Description, onPrivacyPolicyClick)
             )
             
             items(privacyOptions) { option ->
@@ -126,6 +133,16 @@ fun SecurityRow(option: SecurityOption) {
 @Composable
 fun SecurityPrivacyScreenPreview() {
     SmartHomeDesignTheme {
-        SecurityPrivacyScreen(onBackClick = {})
+        SecurityPrivacyScreen(
+            onBackClick = {},
+            onChangePasswordClick = {},
+            onBiometricClick = {},
+            onTwoFactorClick = {},
+            onLoginHistoryClick = {},
+            onActivityLogClick = {},
+            onThirdPartyAccessClick = {},
+            onDataUsageClick = {},
+            onPrivacyPolicyClick = {}
+        )
     }
 }

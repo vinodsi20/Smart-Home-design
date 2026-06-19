@@ -16,4 +16,12 @@ class UserViewModel : ViewModel() {
             it.copy(name = name, email = email, phone = phone, address = address)
         }
     }
+
+    fun toggleFingerprint(enabled: Boolean) {
+        _userProfile.update { it.copy(isFingerprintEnabled = enabled) }
+    }
+
+    fun toggleTwoFactor(enabled: Boolean) {
+        _userProfile.update { it.copy(isTwoFactorEnabled = enabled) }
+    }
 }

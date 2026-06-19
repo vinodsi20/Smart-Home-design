@@ -23,8 +23,13 @@ class MainActivity : FragmentActivity() {
 
                 when (currentScreen) {
                     "login" -> LoginScreen(
+                        userProfile = userProfile,
                         onLoginSuccess = { currentScreen = "home" },
-                        onBiometricProfileOpen = { currentScreen = "profile" }
+                        onBiometricProfileOpen = { currentScreen = "home" }
+                    )
+                    "fingerprint_login" -> FingerprintLoginScreen(
+                        onSuccess = { currentScreen = "home" },
+                        onUsePassword = { currentScreen = "login" }
                     )
                     "home" -> HomeScreen(
                         userName = userProfile.name,
@@ -58,7 +63,29 @@ class MainActivity : FragmentActivity() {
                     "notifications" -> NotificationsScreen(onBackClick = { currentScreen = "profile" })
                     "security_privacy" -> SecurityPrivacyScreen(
                         onBackClick = { currentScreen = "profile" },
-                        onChangePasswordClick = { currentScreen = "change_password" }
+                        onChangePasswordClick = { currentScreen = "change_password" },
+                        onBiometricClick = { currentScreen = "biometric_settings" },
+                        onTwoFactorClick = { currentScreen = "two_factor_auth" },
+                        onLoginHistoryClick = { currentScreen = "login_history" },
+                        onActivityLogClick = { currentScreen = "activity_log" },
+                        onThirdPartyAccessClick = { currentScreen = "third_party_access" },
+                        onDataUsageClick = { currentScreen = "data_usage" },
+                        onPrivacyPolicyClick = { currentScreen = "privacy_policy" }
+                    )
+                    "activity_log" -> ActivityLogScreen(onBackClick = { currentScreen = "security_privacy" })
+                    "third_party_access" -> ThirdPartyAccessScreen(onBackClick = { currentScreen = "security_privacy" })
+                    "data_usage" -> DataUsageScreen(onBackClick = { currentScreen = "security_privacy" })
+                    "privacy_policy" -> PrivacyPolicyScreen(onBackClick = { currentScreen = "security_privacy" })
+                    "login_history" -> LoginHistoryScreen(onBackClick = { currentScreen = "security_privacy" })
+                    "two_factor_auth" -> TwoFactorAuthScreen(
+                        userProfile = userProfile,
+                        onBackClick = { currentScreen = "security_privacy" },
+                        onToggleTwoFactor = { userViewModel.toggleTwoFactor(it) }
+                    )
+                    "biometric_settings" -> BiometricSettingsScreen(
+                        userProfile = userProfile,
+                        onBackClick = { currentScreen = "security_privacy" },
+                        onToggleFingerprint = { userViewModel.toggleFingerprint(it) }
                     )
                     "change_password" -> ChangePasswordScreen(
                         onBackClick = { currentScreen = "security_privacy" },

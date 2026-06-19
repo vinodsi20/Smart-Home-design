@@ -4,5 +4,7 @@ data class UserProfile(
     val name: String = "Vinod Kumar",
     val email: String = "test@gmail.com",
     val phone: String = "+91 9876543210",
-    val address: String = "123 Smart Street, Tech City"
+    val address: String = "123 Smart Street, Tech City",
+    val isFingerprintEnabled: Boolean = true,
+    val isTwoFactorEnabled: Boolean = false
 )
