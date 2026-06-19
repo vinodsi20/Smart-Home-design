@@ -1,5 +1,7 @@
 package com.example.smarthomedesign
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +22,13 @@ class MainActivity : FragmentActivity() {
                 val userViewModel: UserViewModel = viewModel()
                 val userProfile by userViewModel.userProfile.collectAsState()
                 var currentScreen by remember { mutableStateOf("login") }
+
+                fun openDialer(phoneNumber: String) {
+                    val intent = Intent(Intent.ACTION_DIAL).apply {
+                        data = Uri.parse("tel:$phoneNumber")
+                    }
+                    startActivity(intent)
+                }
 
                 when (currentScreen) {
                     "login" -> LoginScreen(
@@ -94,14 +103,20 @@ class MainActivity : FragmentActivity() {
                     "help_support" -> HelpSupportScreen(
                         onBackClick = { currentScreen = "profile" },
                         onChatClick = { currentScreen = "support_chat" },
-                        onCallClick = { currentScreen = "support_call" },
-                        onEmailClick = { currentScreen = "support_email" }
+                        onCallClick = { openDialer("7875311455") },
+                        onEmailClick = { currentScreen = "support_email" },
+                        onReportIssueClick = { currentScreen = "report_issue" }
                     )
                     "support_chat" -> SupportChatScreen(onBackClick = { currentScreen = "help_support" })
                     "support_call" -> CallSupportScreen(onEndCall = { currentScreen = "help_support" })
                     "support_email" -> EmailSupportScreen(
+                        userEmail = userProfile.email,
                         onBackClick = { currentScreen = "help_support" },
                         onSendClick = { currentScreen = "help_support" }
+                    )
+                    "report_issue" -> ReportIssueScreen(
+                        onBackClick = { currentScreen = "help_support" },
+                        onSendReport = { currentScreen = "help_support" }
                     )
                 }
             }

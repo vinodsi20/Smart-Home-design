@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -20,14 +21,26 @@ import com.example.smarthomedesign.ui.theme.SmartHomeDesignTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailSupportScreen(onBackClick: () -> Unit, onSendClick: () -> Unit) {
+fun EmailSupportScreen(
+    userEmail: String = "user@example.com",
+    onBackClick: () -> Unit,
+    onSendClick: () -> Unit
+) {
     var subject by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("Technical Issue") }
-    var expanded by remember { mutableStateOf(false) }
+    var recipientEmail by remember { mutableStateOf("support@smarthomedesign.com") }
+    var expandedCategory by remember { mutableStateOf(false) }
+    var expandedRecipient by remember { mutableStateOf(false) }
     val attachments = remember { mutableStateListOf<String>() }
 
     val categories = listOf("Technical Issue", "Account Problem", "Device Pairing", "Feedback", "Other")
+    val recipients = listOf(
+        "Technical Support" to "support@smarthomedesign.com",
+        "Sales & Billing" to "billing@smarthomedesign.com",
+        "Partnerships" to "partners@smarthomedesign.com",
+        "Security Team" to "security@smarthomedesign.com"
+    )
 
     Scaffold(
         topBar = {
@@ -57,41 +70,85 @@ fun EmailSupportScreen(onBackClick: () -> Unit, onSendClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Send us a message",
+                text = "Compose Support Email",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
-            
-            Text(
-                text = "Our team typically responds within 24 hours.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+
+            // From Field
+            OutlinedTextField(
+                value = userEmail,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("From") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                )
             )
+
+            // Recipient Dropdown
+            ExposedDropdownMenuBox(
+                expanded = expandedRecipient,
+                onExpandedChange = { expandedRecipient = !expandedRecipient }
+            ) {
+                OutlinedTextField(
+                    value = recipientEmail,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("To") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRecipient) },
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    shape = RoundedCornerShape(12.dp),
+                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) }
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedRecipient,
+                    onDismissRequest = { expandedRecipient = false }
+                ) {
+                    recipients.forEach { (name, email) ->
+                        DropdownMenuItem(
+                            text = { 
+                                Column {
+                                    Text(name, fontWeight = FontWeight.Bold)
+                                    Text(email, style = MaterialTheme.typography.labelSmall)
+                                }
+                            },
+                            onClick = {
+                                recipientEmail = email
+                                expandedRecipient = false
+                            }
+                        )
+                    }
+                }
+            }
 
             // Category Dropdown
             ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
+                expanded = expandedCategory,
+                onExpandedChange = { expandedCategory = !expandedCategory }
             ) {
                 OutlinedTextField(
                     value = category,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Category") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
                     modifier = Modifier.fillMaxWidth().menuAnchor(),
                     shape = RoundedCornerShape(12.dp)
                 )
                 ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    expanded = expandedCategory,
+                    onDismissRequest = { expandedCategory = false }
                 ) {
                     categories.forEach { selectionOption ->
                         DropdownMenuItem(
                             text = { Text(selectionOption) },
                             onClick = {
                                 category = selectionOption
-                                expanded = false
+                                expandedCategory = false
                             }
                         )
                     }

@@ -75,6 +75,11 @@ fun CallSupportScreen(onEndCall: () -> Unit) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
+                    text = "+91 78753 11455",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+                Text(
                     text = timeString,
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White.copy(alpha = 0.7f)

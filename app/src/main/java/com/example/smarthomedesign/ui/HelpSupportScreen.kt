@@ -27,7 +27,8 @@ fun HelpSupportScreen(
     onBackClick: () -> Unit,
     onChatClick: () -> Unit = {},
     onCallClick: () -> Unit = {},
-    onEmailClick: () -> Unit = {}
+    onEmailClick: () -> Unit = {},
+    onReportIssueClick: () -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
     
@@ -106,6 +107,7 @@ fun HelpSupportScreen(
                     SupportChannelCard(
                         icon = Icons.Default.Phone,
                         label = "Call",
+                        subtitle = "7875311455",
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.tertiaryContainer,
                         onClick = onCallClick
@@ -141,6 +143,52 @@ fun HelpSupportScreen(
             }
 
             item {
+                Text(
+                    text = "Advanced Options",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                )
+            }
+
+            item {
+                Surface(
+                    onClick = onReportIssueClick,
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.BugReport,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Report a Technical Problem",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Text(
+                                text = "Send a detailed bug report with system logs",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        Icon(Icons.Default.ChevronRight, contentDescription = null)
+                    }
+                }
+            }
+
+            item {
                 Spacer(modifier = Modifier.height(24.dp))
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -170,12 +218,13 @@ fun HelpSupportScreen(
 fun SupportChannelCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
+    subtitle: String? = null,
     modifier: Modifier = Modifier,
     color: androidx.compose.ui.graphics.Color,
     onClick: () -> Unit
 ) {
     Card(
-        modifier = modifier.height(100.dp),
+        modifier = modifier.height(110.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = color),
         onClick = onClick
@@ -186,8 +235,11 @@ fun SupportChannelCard(
             verticalArrangement = Arrangement.Center
         ) {
             Icon(icon, contentDescription = label, modifier = Modifier.size(28.dp))
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+            if (subtitle != null) {
+                Text(subtitle, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
     }
 }
@@ -247,7 +299,8 @@ fun HelpSupportScreenPreview() {
             onBackClick = {},
             onChatClick = {},
             onCallClick = {},
-            onEmailClick = {}
+            onEmailClick = {},
+            onReportIssueClick = {}
         )
     }
 }
