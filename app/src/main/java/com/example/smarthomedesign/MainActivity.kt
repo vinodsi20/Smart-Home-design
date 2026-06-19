@@ -91,7 +91,18 @@ class MainActivity : FragmentActivity() {
                         onBackClick = { currentScreen = "security_privacy" },
                         onPasswordChanged = { currentScreen = "security_privacy" }
                     )
-                    "help_support" -> HelpSupportScreen(onBackClick = { currentScreen = "profile" })
+                    "help_support" -> HelpSupportScreen(
+                        onBackClick = { currentScreen = "profile" },
+                        onChatClick = { currentScreen = "support_chat" },
+                        onCallClick = { currentScreen = "support_call" },
+                        onEmailClick = { currentScreen = "support_email" }
+                    )
+                    "support_chat" -> SupportChatScreen(onBackClick = { currentScreen = "help_support" })
+                    "support_call" -> CallSupportScreen(onEndCall = { currentScreen = "help_support" })
+                    "support_email" -> EmailSupportScreen(
+                        onBackClick = { currentScreen = "help_support" },
+                        onSendClick = { currentScreen = "help_support" }
+                    )
                 }
             }
         }

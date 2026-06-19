@@ -21,12 +21,12 @@ import com.example.smarthomedesign.ui.theme.SmartHomeDesignTheme
 @Composable
 fun ActivityLogScreen(onBackClick: () -> Unit) {
     val logs = listOf(
-        ActivityLog("Main Door", "Unlocked via Fingerprint", "Today, 10:24 AM", Icons.Default.LockOpen),
-        ActivityLog("Living Room Light", "Turned ON", "Today, 09:15 AM", Icons.Default.Lightbulb),
-        ActivityLog("Kitchen Camera", "Motion Detected", "Today, 08:30 AM", Icons.Default.Videocam),
-        ActivityLog("Smart Thermostat", "Temperature set to 22°C", "Yesterday, 11:45 PM", Icons.Default.Thermostat),
-        ActivityLog("Garage Door", "Closed", "Yesterday, 06:20 PM", Icons.Default.Garage),
-        ActivityLog("Main Door", "Locked", "Yesterday, 06:15 PM", Icons.Default.Lock)
+        ActivityLog("Main Door", "Unlocked via Fingerprint - Vinod", "Today, 10:24 AM", Icons.Default.LockOpen),
+        ActivityLog("Living Room Light", "Dimmed to 50%", "Today, 09:15 AM", Icons.Default.Lightbulb),
+        ActivityLog("Kitchen Camera", "Person Detected - Recording Started", "Today, 08:30 AM", Icons.Default.Videocam),
+        ActivityLog("Smart Thermostat", "Mode changed to Eco - 22°C", "Yesterday, 11:45 PM", Icons.Default.Thermostat),
+        ActivityLog("Garage Door", "Securely Closed", "Yesterday, 06:20 PM", Icons.Default.Garage),
+        ActivityLog("Main Door", "Auto-Locked", "Yesterday, 06:15 PM", Icons.Default.Lock)
     )
 
     Scaffold(

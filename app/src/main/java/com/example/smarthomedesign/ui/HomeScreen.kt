@@ -53,20 +53,30 @@ fun HomeScreen(
     val devices = remember(selectedCategory) {
         when (selectedCategory) {
             "Lighting" -> listOf(
-                DeviceItem("Main Light", "On", Icons.Default.Light, true),
-                DeviceItem("Desk Lamp", "Off", Icons.Default.TipsAndUpdates, false),
-                DeviceItem("LED Strip", "On", Icons.Default.LinearScale, true),
-                DeviceItem("Night Light", "Off", Icons.Default.Nightlight, false)
+                DeviceItem("Living Room Light", "On", Icons.Default.Lightbulb, true),
+                DeviceItem("Kitchen Light", "Off", Icons.Default.Light, false),
+                DeviceItem("Bedroom Lamp", "On", Icons.Default.TipsAndUpdates, true),
+                DeviceItem("Dining Light", "Off", Icons.Default.Light, false)
             )
             "Climate" -> listOf(
-                DeviceItem("AC Unit", "22°C", Icons.Default.AcUnit, true),
+                DeviceItem("Smart Thermostat", "22°C", Icons.Default.Thermostat, true),
                 DeviceItem("Air Purifier", "On", Icons.Default.Air, true),
                 DeviceItem("Humidifier", "Off", Icons.Default.WaterDrop, false)
             )
             "Security" -> listOf(
-                DeviceItem("Front Door", "Locked", Icons.Default.Lock, true),
-                DeviceItem("Garage Door", "Closed", Icons.Default.SensorDoor, true),
-                DeviceItem("Camera 1", "Active", Icons.Default.Videocam, true)
+                DeviceItem("Main Door", "Locked", Icons.Default.Lock, true),
+                DeviceItem("Kitchen Camera", "Live", Icons.Default.Videocam, true),
+                DeviceItem("Living Room Camera", "Inactive", Icons.Default.Videocam, false)
+            )
+            "Kitchen" -> listOf(
+                DeviceItem("Kitchen Camera", "Monitoring", Icons.Default.Videocam, true),
+                DeviceItem("Smart Fridge", "Online", Icons.Default.Kitchen, true),
+                DeviceItem("Dishwasher", "Finished", Icons.Default.Countertops, false),
+                DeviceItem("Oven", "Off", Icons.Default.Microwave, false)
+            )
+            "Garage" -> listOf(
+                DeviceItem("Garage Door", "Closed", Icons.Default.Garage, true),
+                DeviceItem("Garage Light", "Off", Icons.Default.Lightbulb, false)
             )
             else -> listOf(
                 DeviceItem("Smart Hub", "Online", Icons.Default.Hub, true)
@@ -86,6 +96,28 @@ fun HomeScreen(
         ) {
             item {
                 SummaryCard()
+            }
+            item {
+                Column {
+                    SectionTitle(title = "Favorites")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(end = 16.dp)
+                    ) {
+                        val favorites = listOf(
+                            DeviceItem("Main Door", "Locked", Icons.Default.Lock, true),
+                            DeviceItem("Smart Thermostat", "22°C", Icons.Default.Thermostat, true),
+                            DeviceItem("Garage Door", "Closed", Icons.Default.Garage, true)
+                        )
+                        items(favorites) { device ->
+                            DeviceCard(
+                                device = device,
+                                modifier = Modifier.width(160.dp)
+                            )
+                        }
+                    }
+                }
             }
             item {
                 Column {
