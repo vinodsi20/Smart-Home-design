@@ -20,13 +20,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.smarthomedesign.R
 import com.example.smarthomedesign.ui.theme.SmartHomeDesignTheme
 
@@ -87,7 +90,7 @@ fun HomeScreen(
 
     Scaffold(
         topBar = { HomeTopBar(userName = userName, onProfileClick = onProfileClick) },
-        containerColor = Color(0xFFF7F9FF) // Light background like in image
+        containerColor = Color(0xFF050A19) // Deep dark blue like the image
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -98,6 +101,9 @@ fun HomeScreen(
         ) {
             item {
                 SummaryCard()
+            }
+            item {
+                SystemStatusRow()
             }
             item {
                 Column {
@@ -223,14 +229,14 @@ fun HomeTopBar(userName: String, onProfileClick: () -> Unit) {
             Text(
                 text = "Welcome Home,",
                 style = MaterialTheme.typography.titleSmall,
-                color = Color.Gray,
+                color = Color.LightGray,
                 modifier = Modifier.padding(bottom = 0.dp)
             )
             Text(
                 text = userName,
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.White
             )
         }
         Surface(
@@ -238,7 +244,7 @@ fun HomeTopBar(userName: String, onProfileClick: () -> Unit) {
                 .size(52.dp)
                 .clip(CircleShape)
                 .clickable { onProfileClick() },
-            color = Color(0xFFD9E2FF),
+            color = Color(0xFF1E2633),
             shape = CircleShape
         ) {
             Box(contentAlignment = Alignment.Center) {
@@ -246,7 +252,7 @@ fun HomeTopBar(userName: String, onProfileClick: () -> Unit) {
                     imageVector = Icons.Default.Person,
                     contentDescription = "Profile",
                     modifier = Modifier.size(28.dp),
-                    tint = Color(0xFF0061A4)
+                    tint = Color(0xFF80D8FF)
                 )
             }
         }
@@ -257,62 +263,143 @@ fun HomeTopBar(userName: String, onProfileClick: () -> Unit) {
 fun SummaryCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF0061A4)) // Darker blue like image
+        shape = RoundedCornerShape(32.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(280.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF0D1B2A), Color(0xFF1B263B))
+                    )
+                )
         ) {
-            // House Outline Icon in background
             Icon(
                 imageVector = Icons.Default.Home,
                 contentDescription = null,
                 modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(140.dp)
-                    .offset(x = 10.dp, y = 20.dp),
-                tint = Color.White.copy(alpha = 0.15f)
+                    .align(Alignment.BottomEnd)
+                    .size(240.dp)
+                    .offset(x = 40.dp, y = 40.dp),
+                tint = Color(0xFF80D8FF).copy(alpha = 0.05f)
             )
-            
-            Row(
+
+            Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(24.dp)
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(
-                        text = "24°C",
-                        style = MaterialTheme.typography.displayMedium,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Indoor Temperature",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.8f)
-                    )
-                }
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxHeight()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Text(
-                        text = "Cloudy",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = "Humidity: 45%",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.8f)
-                    )
+                    Column {
+                        Text(
+                            text = "My Smart Home",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = 0.7f)
+                        )
+                        Text(
+                            text = "24°C",
+                            style = MaterialTheme.typography.displayLarge,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    
+                    Surface(
+                        color = Color.White.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(Icons.Default.Cloud, contentDescription = null, tint = Color.White)
+                            Text("Cloudy", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FloatingTechIcon(Icons.Default.WaterDrop, "Water")
+                    FloatingTechIcon(Icons.Default.Timer, "Timer")
+                    FloatingTechIcon(Icons.Default.Lightbulb, "Light")
+                    FloatingTechIcon(Icons.Default.Thermostat, "Temp")
+                    FloatingTechIcon(Icons.Default.Videocam, "Camera")
+                }
+            }
+            
+            Image(
+                painter = painterResource(id = R.drawable.ic_smart_home_hero),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .size(180.dp)
+                    .offset(x = 10.dp, y = -20.dp),
+                alpha = 0.6f
+            )
+        }
+    }
+}
+
+@Composable
+fun FloatingTechIcon(icon: ImageVector, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color(0xFF80D8FF).copy(alpha = 0.15f), CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                modifier = Modifier.size(20.dp),
+                tint = Color(0xFF80D8FF)
+            )
+        }
+    }
+}
+
+@Composable
+fun SystemStatusRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        StatusBadge("System", "Online", Icons.Default.CheckCircle, Color(0xFF4CAF50), Modifier.weight(1f))
+        StatusBadge("Security", "Armed", Icons.Default.Shield, Color(0xFF80D8FF), Modifier.weight(1f))
+        StatusBadge("Storage", "85%", Icons.Default.Dns, Color(0xFFFF9800), Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun StatusBadge(label: String, value: String, icon: ImageVector, color: Color, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = Color(0xFF1B263B), // Dark blue status card
+        shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Column {
+                Text(label, style = MaterialTheme.typography.labelSmall, color = Color.LightGray)
+                Text(value, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = Color.White)
             }
         }
     }
@@ -328,12 +415,13 @@ fun SectionTitle(title: String, onSeeAllClick: () -> Unit = {}) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.White
         )
         TextButton(onClick = onSeeAllClick) {
             Text(
                 text = "See all",
-                color = Color(0xFF0061A4),
+                color = Color(0xFF80D8FF),
                 fontWeight = FontWeight.Medium
             )
         }
@@ -370,7 +458,7 @@ fun CategoryCard(
 ) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = if (isSelected) Color(0xFF0061A4) else Color(0xFFE9EEF6),
+        color = if (isSelected) Color(0xFF0061A4) else Color(0xFF1B263B),
         onClick = onClick
     ) {
         Row(
@@ -381,14 +469,14 @@ fun CategoryCard(
                 imageVector = category.icon,
                 contentDescription = category.name,
                 modifier = Modifier.size(24.dp),
-                tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                tint = if (isSelected) Color.White else Color(0xFF80D8FF)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = category.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
-                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (isSelected) Color.White else Color.LightGray
             )
         }
     }
@@ -401,7 +489,7 @@ fun RoomDesignCard() {
             .fillMaxWidth()
             .height(180.dp),
         shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE2E7FF)) // Light lavender/blue
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2633))
     ) {
         Row(
             modifier = Modifier
@@ -416,31 +504,30 @@ fun RoomDesignCard() {
                     text = "Living Room",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1B1B1F)
+                    color = Color.White
                 )
                 Text(
                     text = "3 active devices in this area",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color(0xFF1B1B1F).copy(alpha = 0.7f)
+                    color = Color.LightGray
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = { },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF445E91)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0061A4)),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
                 ) {
-                    Text("Manage", fontWeight = FontWeight.Bold)
+                    Text("Manage", fontWeight = FontWeight.Bold, color = Color.White)
                 }
             }
-            // Illustration placeholder - using Icon if drawable is not perfect
             Icon(
                 imageVector = Icons.Default.Chair,
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
                     .padding(8.dp),
-                tint = Color(0xFF445E91).copy(alpha = 0.6f)
+                tint = Color(0xFF80D8FF).copy(alpha = 0.6f)
             )
         }
     }
@@ -455,7 +542,7 @@ fun DeviceCard(device: DeviceItem, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isToggled) Color(0xFFD9E2FF) else MaterialTheme.colorScheme.surfaceVariant
+            containerColor = if (isToggled) Color(0xFF1E3A5F) else Color(0xFF1B263B)
         ),
         modifier = modifier.height(160.dp),
         onClick = { isToggled = !isToggled }
@@ -470,7 +557,7 @@ fun DeviceCard(device: DeviceItem, modifier: Modifier = Modifier) {
                 imageVector = device.icon,
                 contentDescription = device.name,
                 modifier = Modifier.size(36.dp),
-                tint = if (isToggled) Color(0xFF0061A4) else MaterialTheme.colorScheme.onSurfaceVariant
+                tint = if (isToggled) Color(0xFF80D8FF) else Color.LightGray
             )
             
             Column {
@@ -478,12 +565,12 @@ fun DeviceCard(device: DeviceItem, modifier: Modifier = Modifier) {
                     text = device.name,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = if (isToggled) Color(0xFF0061A4) else MaterialTheme.colorScheme.onSurface
+                    color = Color.White
                 )
                 Text(
                     text = if (isToggled) "On" else "Off",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (isToggled) Color(0xFF0061A4).copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (isToggled) Color(0xFF80D8FF).copy(alpha = 0.7f) else Color.Gray
                 )
             }
         }
