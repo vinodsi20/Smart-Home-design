@@ -3,6 +3,7 @@ package com.example.smarthomedesign.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -82,21 +83,51 @@ fun NotificationsScreen(onBackClick: () -> Unit) {
 
 @Composable
 fun NotificationInbox() {
-    val notifications = listOf(
-        NotificationItem("Security Alert", "Motion detected in Living Room at 10:45 PM", "10 min ago", Icons.Default.Security, MaterialTheme.colorScheme.error),
-        NotificationItem("Automation Success", "Routine 'Good Night' started successfully", "1 hr ago", Icons.Default.AutoMode, MaterialTheme.colorScheme.primary),
-        NotificationItem("Energy Report", "Your energy usage was 15% lower this week!", "3 hrs ago", Icons.Default.BarChart, Color(0xFF4CAF50)),
-        NotificationItem("Device Offline", "Front Door Camera is currently offline", "5 hrs ago", Icons.Default.VideocamOff, MaterialTheme.colorScheme.error),
-        NotificationItem("Welcome Home", "Living Room AC turned on automatically", "6 hrs ago", Icons.Default.AcUnit, MaterialTheme.colorScheme.primary)
+    var selectedFilter by remember { mutableStateOf("All") }
+    val filters = listOf("All", "Security", "Automation", "Energy")
+
+    val allNotifications = listOf(
+        NotificationItem("Security Alert", "Motion detected in Living Room at 10:45 PM", "10 min ago", Icons.Default.Security, MaterialTheme.colorScheme.error, "Security"),
+        NotificationItem("Automation Success", "Routine 'Good Night' started successfully", "1 hr ago", Icons.Default.AutoMode, MaterialTheme.colorScheme.primary, "Automation"),
+        NotificationItem("Energy Report", "Your energy usage was 15% lower this week!", "3 hrs ago", Icons.Default.BarChart, Color(0xFF4CAF50), "Energy"),
+        NotificationItem("Device Offline", "Front Door Camera is currently offline", "5 hrs ago", Icons.Default.VideocamOff, MaterialTheme.colorScheme.error, "Security"),
+        NotificationItem("Welcome Home", "Living Room AC turned on automatically", "6 hrs ago", Icons.Default.AcUnit, MaterialTheme.colorScheme.primary, "Automation")
     )
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(notifications) { item ->
-            NotificationRow(item)
+    val filteredNotifications = if (selectedFilter == "All") {
+        allNotifications
+    } else {
+        allNotifications.filter { it.category == selectedFilter }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(filters) { filter ->
+                FilterChip(
+                    selected = selectedFilter == filter,
+                    onClick = { selectedFilter = filter },
+                    label = { Text(filter) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                )
+            }
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 16.dp, start = 16.dp, end = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(filteredNotifications) { item ->
+                NotificationRow(item)
+            }
         }
     }
 }
@@ -163,7 +194,14 @@ fun PreferenceToggle(title: String, subtitle: String, initialState: Boolean) {
     }
 }
 
-data class NotificationItem(val title: String, val message: String, val time: String, val icon: ImageVector, val iconColor: Color)
+data class NotificationItem(
+    val title: String, 
+    val message: String, 
+    val time: String, 
+    val icon: ImageVector, 
+    val iconColor: Color,
+    val category: String = "All"
+)
 
 @Composable
 fun NotificationRow(item: NotificationItem) {

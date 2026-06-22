@@ -1,19 +1,25 @@
 package com.example.smarthomedesign.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.AttachFile
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,7 +38,31 @@ fun EmailSupportScreen(
     var recipientEmail by remember { mutableStateOf("support@smarthomedesign.com") }
     var expandedCategory by remember { mutableStateOf(false) }
     var expandedRecipient by remember { mutableStateOf(false) }
+    
+    var showAttachmentSource by remember { mutableStateOf(false) }
+    
     val attachments = remember { mutableStateListOf<String>() }
+    val sheetState = rememberModalBottomSheetState()
+
+    // Real system launcher for Album/Gallery
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            attachments.add("Album_Image_${attachments.size + 1}.jpg")
+            showAttachmentSource = false
+        }
+    }
+
+    // Real system launcher for Camera
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview()
+    ) { bitmap ->
+        bitmap?.let {
+            attachments.add("Camera_Photo_${attachments.size + 1}.jpg")
+            showAttachmentSource = false
+        }
+    }
 
     val categories = listOf("Technical Issue", "Account Problem", "Device Pairing", "Feedback", "Other")
     val recipients = listOf(
@@ -52,9 +82,7 @@ fun EmailSupportScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { 
-                        attachments.add("screenshot_${attachments.size + 1}.png")
-                    }) {
+                    IconButton(onClick = { showAttachmentSource = true }) {
                         Icon(Icons.Default.AttachFile, contentDescription = "Attach File")
                     }
                 }
@@ -212,6 +240,81 @@ fun EmailSupportScreen(
                 Text("Send Email")
             }
         }
+
+        // Attachment Source Selector
+        if (showAttachmentSource) {
+            ModalBottomSheet(
+                onDismissRequest = { showAttachmentSource = false },
+                sheetState = sheetState
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp, start = 24.dp, end = 24.dp)
+                ) {
+                    Text(
+                        text = "Attach from",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        AttachmentSourceItem(
+                            title = "Camera",
+                            icon = Icons.Default.PhotoCamera,
+                            color = MaterialTheme.colorScheme.primary,
+                            onClick = { cameraLauncher.launch(null) }
+                        )
+                        AttachmentSourceItem(
+                            title = "Album",
+                            icon = Icons.Default.Collections,
+                            color = Color(0xFFFF9800),
+                            onClick = { galleryLauncher.launch("image/*") }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AttachmentSourceItem(
+    title: String,
+    icon: ImageVector,
+    color: Color,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Surface(
+            modifier = Modifier.size(64.dp),
+            shape = CircleShape,
+            color = color.copy(alpha = 0.1f)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = title,
+                    modifier = Modifier.size(32.dp),
+                    tint = color
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
