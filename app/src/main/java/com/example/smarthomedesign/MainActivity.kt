@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,8 +19,11 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SmartHomeDesignTheme {
-                val userViewModel: UserViewModel = viewModel()
+            val userViewModel: UserViewModel = viewModel()
+            val isDarkMode by userViewModel.isDarkMode.collectAsState()
+            val darkTheme = isDarkMode ?: isSystemInDarkTheme()
+
+            SmartHomeDesignTheme(darkTheme = darkTheme) {
                 val userProfile by userViewModel.userProfile.collectAsState()
                 var currentScreen by remember { mutableStateOf("login") }
 
@@ -53,7 +57,13 @@ class MainActivity : FragmentActivity() {
                         onDevicesAutomationClick = { currentScreen = "devices_automation" },
                         onNotificationsClick = { currentScreen = "notifications" },
                         onSecurityPrivacyClick = { currentScreen = "security_privacy" },
+                        onThemeSettingsClick = { currentScreen = "theme_settings" },
                         onHelpSupportClick = { currentScreen = "help_support" }
+                    )
+                    "theme_settings" -> ThemeSettingsScreen(
+                        currentDarkMode = isDarkMode,
+                        onBackClick = { currentScreen = "profile" },
+                        onThemeChange = { userViewModel.setDarkMode(it) }
                     )
                     "personal_info" -> PersonalInformationScreen(
                         userProfile = userProfile,

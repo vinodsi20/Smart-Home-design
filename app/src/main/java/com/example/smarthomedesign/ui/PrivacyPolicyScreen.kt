@@ -38,7 +38,7 @@ fun PrivacyPolicyScreen(onBackClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Smart Home Design Privacy Policy",
+                text = "Smart Home Privacy Policy",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )

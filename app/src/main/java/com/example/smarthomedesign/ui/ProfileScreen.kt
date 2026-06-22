@@ -40,6 +40,7 @@ fun ProfileScreen(
     onDevicesAutomationClick: () -> Unit,
     onNotificationsClick: () -> Unit,
     onSecurityPrivacyClick: () -> Unit,
+    onThemeSettingsClick: () -> Unit,
     onHelpSupportClick: () -> Unit
 ) {
     var showImageSourceSelector by remember { mutableStateOf(false) }
@@ -172,6 +173,7 @@ fun ProfileScreen(
                 SettingsItem("Devices & Automation", Icons.Default.Settings),
                 SettingsItem("Notifications", Icons.Default.Notifications),
                 SettingsItem("Security & Privacy", Icons.Default.Security),
+                SettingsItem("Display & Theme", Icons.Default.Palette),
                 SettingsItem("Help & Support", Icons.Default.Help)
             )
 
@@ -185,6 +187,7 @@ fun ProfileScreen(
                             "Devices & Automation" -> onDevicesAutomationClick()
                             "Notifications" -> onNotificationsClick()
                             "Security & Privacy" -> onSecurityPrivacyClick()
+                            "Display & Theme" -> onThemeSettingsClick()
                             "Help & Support" -> onHelpSupportClick()
                         }
                     }
@@ -346,6 +349,7 @@ fun ProfileScreenPreview() {
             onDevicesAutomationClick = {},
             onNotificationsClick = {},
             onSecurityPrivacyClick = {},
+            onThemeSettingsClick = {},
             onHelpSupportClick = {}
         )
     }

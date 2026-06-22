@@ -24,4 +24,11 @@ class UserViewModel : ViewModel() {
     fun toggleTwoFactor(enabled: Boolean) {
         _userProfile.update { it.copy(isTwoFactorEnabled = enabled) }
     }
+
+    private val _isDarkMode = MutableStateFlow<Boolean?>(null) // null means follow system
+    val isDarkMode: StateFlow<Boolean?> = _isDarkMode.asStateFlow()
+
+    fun setDarkMode(enabled: Boolean?) {
+        _isDarkMode.value = enabled
+    }
 }
