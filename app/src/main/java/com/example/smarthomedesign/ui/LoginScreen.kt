@@ -1,6 +1,7 @@
 package com.example.smarthomedesign.ui
 
 import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -28,6 +29,9 @@ import com.example.smarthomedesign.model.UserProfile
 import com.example.smarthomedesign.ui.theme.SmartHomeDesignTheme
 import kotlinx.coroutines.delay
 
+import androidx.compose.ui.res.painterResource
+import com.example.smarthomedesign.R
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
@@ -41,9 +45,6 @@ fun LoginScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     
-    var showBiometricPopup by remember { mutableStateOf(false) }
-    var biometricStatus by remember { mutableStateOf("IDLE") } // IDLE, SCANNING, SUCCESS, FAILED
-
     // Biometric Integration
     val executor = ContextCompat.getMainExecutor(context)
     val biometricPrompt = remember {
@@ -53,8 +54,7 @@ fun LoginScreen(
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    biometricStatus = "FAILED"
-                    showBiometricPopup = true
+                    errorMessage = errString.toString()
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -64,8 +64,7 @@ fun LoginScreen(
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
-                    biometricStatus = "FAILED"
-                    showBiometricPopup = true
+                    errorMessage = "Biometric authentication failed"
                 }
             }
         )
@@ -76,13 +75,6 @@ fun LoginScreen(
         .setSubtitle("Log in using your fingerprint")
         .setNegativeButtonText("Use Password")
         .build()
-
-    LaunchedEffect(biometricStatus) {
-        if (biometricStatus == "SCANNING") {
-            delay(1000)
-            biometricStatus = "SUCCESS"
-        }
-    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -97,16 +89,15 @@ fun LoginScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = null,
-                    modifier = Modifier.size(60.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                Image(
+                    painter = painterResource(id = R.drawable.ic_smart_home_hero),
+                    contentDescription = "Smart Home Logo",
+                    modifier = Modifier.size(90.dp)
                 )
             }
 
@@ -163,12 +154,10 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 IconButton(
                     onClick = { 
-                        biometricStatus = "SCANNING"
-                        showBiometricPopup = true
                         try {
                             biometricPrompt.authenticate(promptInfo)
                         } catch (e: Exception) {
-                            // Simulation mode fallback
+                            errorMessage = "Biometric not available"
                         }
                     },
                     modifier = Modifier.size(64.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
@@ -176,59 +165,6 @@ fun LoginScreen(
                     Icon(Icons.Default.Fingerprint, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 }
             }
-        }
-
-        if (showBiometricPopup) {
-            AlertDialog(
-                onDismissRequest = { showBiometricPopup = false; biometricStatus = "IDLE" },
-                confirmButton = {
-                    if (biometricStatus == "SUCCESS") {
-                        Button(onClick = { 
-                            showBiometricPopup = false
-                            onBiometricProfileOpen() 
-                        }) {
-                            Text("Unlock")
-                        }
-                    } else if (biometricStatus == "FAILED") {
-                        TextButton(onClick = { biometricStatus = "SCANNING" }) {
-                            Text("Try Again")
-                        }
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showBiometricPopup = false; biometricStatus = "IDLE" }) {
-                        Text("Cancel")
-                    }
-                },
-                title = {
-                    Text(text = when(biometricStatus) {
-                        "SCANNING" -> "Scanning Fingerprint..."
-                        "SUCCESS" -> "Authentication Successful"
-                        "FAILED" -> "Detection Failed"
-                        else -> "Security Verification"
-                    })
-                },
-                text = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        when(biometricStatus) {
-                            "SCANNING" -> CircularProgressIndicator(modifier = Modifier.size(48.dp))
-                            "SUCCESS" -> {
-                                Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50), modifier = Modifier.size(64.dp))
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text("Fingerprint recognized.", textAlign = TextAlign.Center)
-                            }
-                            "FAILED" -> {
-                                Icon(Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(64.dp))
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text("Fingerprint not recognized.", textAlign = TextAlign.Center)
-                            }
-                        }
-                    }
-                }
-            )
         }
     }
 }

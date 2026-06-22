@@ -25,7 +25,7 @@ class MainActivity : FragmentActivity() {
 
             SmartHomeDesignTheme(darkTheme = darkTheme) {
                 val userProfile by userViewModel.userProfile.collectAsState()
-                var currentScreen by remember { mutableStateOf("login") }
+                var currentScreen by remember { mutableStateOf("splash") }
 
                 fun openDialer(phoneNumber: String) {
                     val intent = Intent(Intent.ACTION_DIAL).apply {
@@ -35,6 +35,7 @@ class MainActivity : FragmentActivity() {
                 }
 
                 when (currentScreen) {
+                    "splash" -> SplashScreen(onSplashFinished = { currentScreen = "login" })
                     "login" -> LoginScreen(
                         userProfile = userProfile,
                         onLoginSuccess = { currentScreen = "home" },

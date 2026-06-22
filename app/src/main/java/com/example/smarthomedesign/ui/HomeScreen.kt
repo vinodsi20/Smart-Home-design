@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -85,7 +86,8 @@ fun HomeScreen(
     }
 
     Scaffold(
-        topBar = { HomeTopBar(userName = userName, onProfileClick = onProfileClick) }
+        topBar = { HomeTopBar(userName = userName, onProfileClick = onProfileClick) },
+        containerColor = Color(0xFFF7F9FF) // Light background like in image
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -99,7 +101,10 @@ fun HomeScreen(
             }
             item {
                 Column {
-                    SectionTitle(title = "Favorites")
+                    SectionTitle(
+                        title = "Favorites",
+                        onSeeAllClick = { /* Handle See all Favorites */ }
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -135,7 +140,10 @@ fun HomeScreen(
             }
             item {
                 Column {
-                    SectionTitle(title = "Room Design")
+                    SectionTitle(
+                        title = "Room Design",
+                        onSeeAllClick = { /* Handle See all Room Design */ }
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                     RoomDesignCard()
                 }
@@ -207,35 +215,40 @@ fun HomeTopBar(userName: String, onProfileClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
             Text(
                 text = "Welcome Home,",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.titleSmall,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 0.dp)
             )
             Text(
                 text = userName,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
             )
         }
-        Box(
+        Surface(
             modifier = Modifier
-                .size(48.dp)
+                .size(52.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer)
                 .clickable { onProfileClick() },
-            contentAlignment = Alignment.Center
+            color = Color(0xFFD9E2FF),
+            shape = CircleShape
         ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Profile",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(28.dp),
+                    tint = Color(0xFF0061A4)
+                )
+            }
         }
     }
 }
@@ -244,51 +257,60 @@ fun HomeTopBar(userName: String, onProfileClick: () -> Unit) {
 fun SummaryCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF0061A4)) // Darker blue like image
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_smart_home_hero),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+        ) {
+            // House Outline Icon in background
+            Icon(
+                imageVector = Icons.Default.Home,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .size(140.dp)
-                    .offset(x = 20.dp, y = 10.dp),
-                alpha = 0.4f,
-                contentScale = ContentScale.Fit
+                    .offset(x = 10.dp, y = 20.dp),
+                tint = Color.White.copy(alpha = 0.15f)
             )
             
             Row(
                 modifier = Modifier
                     .padding(24.dp)
-                    .fillMaxWidth(),
+                    .fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
                     Text(
                         text = "24°C",
-                        style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.displayMedium,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "Indoor Temperature",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                        color = Color.White.copy(alpha = 0.8f)
                     )
                 }
-                Column(horizontalAlignment = Alignment.End) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
                     Text(
                         text = "Cloudy",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium
                     )
                     Text(
                         text = "Humidity: 45%",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                        color = Color.White.copy(alpha = 0.8f)
                     )
                 }
             }
@@ -305,11 +327,15 @@ fun SectionTitle(title: String, onSeeAllClick: () -> Unit = {}) {
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         TextButton(onClick = onSeeAllClick) {
-            Text(text = "See all")
+            Text(
+                text = "See all",
+                color = Color(0xFF0061A4),
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
@@ -343,25 +369,26 @@ fun CategoryCard(
     onClick: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(12.dp),
+        color = if (isSelected) Color(0xFF0061A4) else Color(0xFFE9EEF6),
         onClick = onClick
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = category.icon,
                 contentDescription = category.name,
-                modifier = Modifier.size(20.dp),
-                tint = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.size(24.dp),
+                tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = category.name,
-                style = MaterialTheme.typography.labelLarge,
-                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium,
+                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -373,13 +400,13 @@ fun RoomDesignCard() {
         modifier = Modifier
             .fillMaxWidth()
             .height(180.dp),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE2E7FF)) // Light lavender/blue
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
@@ -387,30 +414,33 @@ fun RoomDesignCard() {
             ) {
                 Text(
                     text = "Living Room",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = Color(0xFF1B1B1F)
                 )
                 Text(
                     text = "3 active devices in this area",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(0xFF1B1B1F).copy(alpha = 0.7f)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = { },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF445E91)),
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
                 ) {
-                    Text("Manage")
+                    Text("Manage", fontWeight = FontWeight.Bold)
                 }
             }
-            Image(
-                painter = painterResource(id = R.drawable.ic_living_room),
-                contentDescription = "Living Room Layout",
+            // Illustration placeholder - using Icon if drawable is not perfect
+            Icon(
+                imageVector = Icons.Default.Chair,
+                contentDescription = null,
                 modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Fit
+                    .size(100.dp)
+                    .padding(8.dp),
+                tint = Color(0xFF445E91).copy(alpha = 0.6f)
             )
         }
     }
@@ -423,33 +453,39 @@ fun DeviceCard(device: DeviceItem, modifier: Modifier = Modifier) {
     var isToggled by remember { mutableStateOf(device.isOn) }
     
     Card(
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isToggled) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+            containerColor = if (isToggled) Color(0xFFD9E2FF) else MaterialTheme.colorScheme.surfaceVariant
         ),
-        modifier = modifier,
+        modifier = modifier.height(160.dp),
         onClick = { isToggled = !isToggled }
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
                 imageVector = device.icon,
                 contentDescription = device.name,
-                modifier = Modifier.size(32.dp),
-                tint = if (isToggled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.size(36.dp),
+                tint = if (isToggled) Color(0xFF0061A4) else MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = device.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = if (isToggled) "On" else "Off",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            
+            Column {
+                Text(
+                    text = device.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isToggled) Color(0xFF0061A4) else MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = if (isToggled) "On" else "Off",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (isToggled) Color(0xFF0061A4).copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
